@@ -1,0 +1,8 @@
+Create an agent
+Which identifies the events needed for bonuses - goals, assists, tackles, saves and the players involved accurately and efficiently
+All while getting the input from a live input feed
+
+
+what have we done till now - yolo uses, computer vision - sam 3, use links
+
+building a solution - predictable/consistent outcomes, efficient - other relevant meta data(list) - if need be
