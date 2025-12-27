@@ -5,16 +5,17 @@ from kivymd.uix.screen import MDScreen
 from kivy.uix.behaviors import ButtonBehavior
 from kivymd.uix.behaviors import CommonElevationBehavior
 from kivy_garden.mapview import MapView, MapMarkerPopup
-from kivy.properties import StringProperty, ObjectProperty
+from kivy.properties import StringProperty, ObjectProperty, BooleanProperty
 
 KV = '''
 #:import MapView kivy_garden.mapview.MapView
+#:import NoTransition kivy.uix.screenmanager.NoTransition
 
 <TurfInfoCard>:
     orientation: "vertical"
     size_hint_y: None
     size_hint_x: 1
-    height: "250dp"
+    height: "260dp"
     md_bg_color: 0.12, 0.12, 0.12, 1 
     radius: [15] 
     padding: "12dp"
@@ -23,7 +24,7 @@ KV = '''
     #top row --------------------------------------------------------------
     BoxLayout: 
         size_hint_y: None
-        height: "20dp"
+        height: "28dp"
         spacing: "5dp"
 
         MDCard: 
@@ -52,6 +53,31 @@ KV = '''
                 text_color: 0.8, 0.8, 0.8, 1
                 halign: "center"
                 pos_hint: {"center_y": .5}
+        
+        Widget:
+        
+        BoxLayout:
+            size_hint_x: None
+            width: "110dp" if root.is_team_mode else "0dp"
+            opacity: 1 if root.is_team_mode else 0
+            disabled: not root.is_team_mode
+            spacing: "5dp"
+            padding: [0,0, "10dp", 0]
+            
+            MDLabel:  
+                text: "Stay team"
+                font_style: "Caption"
+                theme_text_color: "Custom"
+                text_color: 0.8, 0.9, 0.9, 1
+                halign: "center"
+                pos_hint: {"center_y": .5}
+                size_hint_x: None
+                width: "40dp"
+            
+            MDSwitch: 
+                pos_hint: {"center_y": .5}
+                thumb_color_active: 0.2, 0.8, 0.2, 1
+                active: True
 
     #title + price --------------------------------------------------------
     BoxLayout: 
@@ -136,9 +162,10 @@ KV = '''
         size_hint_y: None
         height: "15dp"
 
+
     #join button ------------------------------
     MDFillRoundFlatButton: 
-        text: "First Payment then Enjoyment"
+        text: "Pay and receive QR code"
         size_hint_x: 1
         md_bg_color: 0.2, 0.8, 0.2, 1
         text_color: "black"
@@ -179,13 +206,7 @@ KV = '''
         md_bg_color: 0.4, 0.4, 0.4, 1
         pos_hint: {"center_y": 0.5}
 
-    MDIconButton:
-        id: view_toggle_btn
-        icon: "format-list-bulleted"
-        pos_hint: {"center_y": 0.5}
-        theme_text_color: "Custom"
-        text_color: 0.4, 0.6, 1, 1
-        on_release: app.toggle_map_list_view()
+
 
 
 #Main screen------------------------------------             
@@ -267,6 +288,14 @@ MDScreen:
 
                 FloatingSearchBar:
                     id: search_bar
+                    
+                    MDIconButton:
+                        id: view_toggle_btn
+                        icon: "format-list-bulleted"
+                        pos_hint: {"center_y": 0.5}
+                        theme_text_color: "Custom"
+                        text_color: 0.4, 0.6, 1, 1
+                        on_release: app.toggle_map_list_view(self)
 
 
         # Tab 2: Team---------------------------------------------
@@ -275,103 +304,175 @@ MDScreen:
             text: ''
             icon: 'account-group'
             
-            MDBoxLayout: 
-                orientation: 'vertical'
-                padding: "20dp"
-                spacing: "20dp"
-                pos_hint: {"top": 0.95} 
+            ScreenManager:
+                id: team_screen_manager
+                transition: NoTransition()
                 
-                MDLabel:
-                    text: "Join as a team"
-                    bold: True
-                    font_style: "H5"
-                    theme_text_color: "Custom"
-                    text_color: "white"
-                    size_hint_y: None
-                    height: "40dp"
-                    
-                BoxLayout:
-                    orientation: "horizontal"
-                    spacing: "15dp"
-                    size_hint_y: None
-                    height: "120dp"
-                    
-                    MDCard: 
-                        orientation: "vertical"
-                        md_bg_color: 0.15, 0.15, 0.15, 1
-                        radius: [15]
-                        padding: "10dp"
-                        ripple_behavior: True
+                MDScreen:
+                    name: "team_menu"
+            
+                    MDBoxLayout: 
+                        orientation: 'vertical'
+                        padding: "20dp"
+                        spacing: "20dp"
+                        pos_hint: {"top": 0.95} 
                         
-                        MDIcon:
-                            icon: "link-variant"
-                            halign: "center"
-                            theme_text_color: "Custom"
-                            text_color: 0.2, 0.8, 0.2, 1
-                            font_size: "35sp"
-                            pos_hint: {"center_y": 0.5, "center_x": 0.5}
-                        
-                        MDLabel:    
-                            text: "Invite via \\nLink"
-                            halign: "center"
-                            theme_text_color: "Custom"
-                            text_color: 0.9, 0.9, 0.9, 1
-                            font_style: "Body2"
-                    
-                    MDCard:
-                        orientation: "vertical"
-                        md_bg_color: 0.15, 0.15, 0.15, 1
-                        radius: [15]
-                        padding: "10dp"
-                        ripple_behavior: True
-                        
-                        MDIcon:
-                            icon: "qrcode-scan"
-                            halign: "center"
-                            theme_text_color: "Custom"
-                            text_color: 0.8, 0.8, 0.2, 1
-                            font_size: "35sp"
-                            pos_hint: {"center_y": 0.5, "center_x": 0.5}
-
-                        # FIX: I have indented this label correctly below
                         MDLabel:
-                            text: "Show\\nQR Code"
-                            halign: "center"
+                            text: "Join as a team"
+                            bold: True
+                            font_style: "H5"
                             theme_text_color: "Custom"
-                            text_color: 0.9, 0.9, 0.9, 1
-                            font_style: "Body2"
+                            text_color: "white"
+                            size_hint_y: None
+                            height: "40dp"
+                            
+                        BoxLayout:
+                            orientation: "horizontal"
+                            spacing: "15dp"
+                            size_hint_y: None
+                            height: "120dp"
+                            
+                            MDCard: 
+                                orientation: "vertical"
+                                md_bg_color: 0.15, 0.15, 0.15, 1
+                                radius: [15]
+                                padding: "10dp"
+                                ripple_behavior: True
+                                
+                                MDIcon:
+                                    icon: "link-variant"
+                                    halign: "center"
+                                    theme_text_color: "Custom"
+                                    text_color: 0.2, 0.8, 0.2, 1
+                                    font_size: "35sp"
+                                    pos_hint: {"center_y": 0.5, "center_x": 0.5}
+                                
+                                MDLabel:    
+                                    text: "Invite via \\nLink"
+                                    halign: "center"
+                                    theme_text_color: "Custom"
+                                    text_color: 0.9, 0.9, 0.9, 1
+                                    font_style: "Body2"
+                            
+                            MDCard:
+                                orientation: "vertical"
+                                md_bg_color: 0.15, 0.15, 0.15, 1
+                                radius: [15]
+                                padding: "10dp"
+                                ripple_behavior: True
+                                
+                                MDIcon:
+                                    icon: "qrcode-scan"
+                                    halign: "center"
+                                    theme_text_color: "Custom"
+                                    text_color: 0.8, 0.8, 0.2, 1
+                                    font_size: "35sp"
+                                    pos_hint: {"center_y": 0.5, "center_x": 0.5}
+        
+                               
+                                MDLabel:
+                                    text: "Show\\nQR Code"
+                                    halign: "center"
+                                    theme_text_color: "Custom"
+                                    text_color: 0.9, 0.9, 0.9, 1
+                                    font_style: "Body2"
+                        
+                        MDCard:
+                            size_hint_y: None
+                            height: "80dp"
+                            md_bg_color: 0.15, 0.15, 0.15, 1
+                            radius: [15]
+                            ripple_behavior: True
+                            padding: "20dp"
+                            spacing: "20dp"
+                            on_release: app.switch_team_screen("team_finder")
+                            
+                            MDIcon:
+                                icon: "magnify"
+                                theme_text_color: "Custom"
+                                text_color: 0.2, 0.8, 0.2, 1
+                                font_size: "30sp"
+                                pos_hint: {"center_y": 0.5}
+                            
+                            MDLabel:
+                                text: "Find Match"
+                                theme_text_color: "Custom"
+                                text_color: "white"
+                                font_style: "H6"
+                                pos_hint: {"center_y": 0.5}
+                            
+                            MDIcon:
+                                icon: "chevron-right"
+                                theme_text_color: "Custom"
+                                text_color: "grey"
+                                pos_hint: {"center_y": 0.5}
+        
+                        Widget:
                 
-                # FIX: I moved this card OUT of the horizontal layout so it sits underneath
-                MDCard:
-                    size_hint_y: None
-                    height: "80dp"
-                    md_bg_color: 0.15, 0.15, 0.15, 1
-                    radius: [15]
-                    ripple_behavior: True
-                    padding: "20dp"
-                    spacing: "20dp"
+                MDScreen:
+                    name: "team_finder"
                     
-                    MDIcon:
-                        icon: "magnify"
-                        theme_text_color: "Custom"
-                        text_color: 0.2, 0.8, 0.2, 1
-                        font_size: "30sp"
-                        pos_hint: {"center_y": 0.5}
-                    
-                    MDLabel:
-                        text: "Find Match"
-                        theme_text_color: "Custom"
-                        text_color: "white"
-                        font_style: "H6"
-                        pos_hint: {"center_y": 0.5}
-                    
-                    MDIcon:
-                        icon: "chevron-right"
-                        theme_text_color: "Custom"
-                        text_color: "grey"
-                        pos_hint: {"center_y": 0.5}
+                    MDFloatLayout:
+                        ScrollView:
+                            id: team_game_list
+                            opacity: 0
+                            disabled: True
+                            pos_hint: {'top': 0.88} 
+                            size_hint_y: 0.88
+                            MDBoxLayout: 
+                                orientation: 'vertical'
+                                adaptive_height: True
+                                padding: "20dp"
+                                spacing: "20dp"
+                                TurfInfoCard:   
+                                    turf_name: "Ground A"
+                                    is_team_mode: True
+                                TurfInfoCard:
+                                    turf_name: "Ground B"
+                                    is_team_mode: True
 
-                Widget:
+                        MapView:
+                            id: team_main_map 
+                            lat: 28.4595
+                            lon: 77.0266
+                            zoom: 12
+                            double_tap_zoom: True
+                            size_hint: 1,1
+                            MapMarkerPopup:
+                                lat: 28.4071
+                                lon: 77.0091
+                                TurfInfoCard: 
+                                    turf_name: "Team Match A"
+                                    size_hint: None, None
+                                    size: "280dp", "260dp"
+                            MapMarkerPopup:
+                                lat: 28.4252
+                                lon: 77.0943
+                                TurfInfoCard:
+                                    turf_name: "Team Match B"
+                                    size_hint: None, None
+                                    size: "280dp", "260dp"
+
+                        FloatingSearchBar:
+                            id: team_search_bar
+                            
+                         
+                            MDIconButton:
+                                icon: "arrow-left"
+                                pos_hint: {"center_y": 0.5}
+                                x: "10dp"
+                                theme_text_color: "Custom"
+                                text_color: 1, 1, 1, 1
+                                on_release: app.switch_team_screen("team_menu")
+
+                            
+                            MDIconButton:
+                                id: team_view_toggle_btn
+                                icon: "format-list-bulleted"
+                                pos_hint: {"center_y": 0.5, "right": 0.98}
+                                theme_text_color: "Custom"
+                                text_color: 0.4, 0.6, 1, 1
+                                on_release: app.toggle_team_view(self)
 
         # Tab 3: You------------------------------------
         MDBottomNavigationItem:
@@ -415,11 +516,13 @@ from kivy.properties import StringProperty
 
 class TurfInfoCard(MDCard):
     turf_name = StringProperty("Turf Name")
+    is_team_mode = BooleanProperty(False)
 
 
 class TurfPeMVP(MDApp):
     # Initialize the state variable
     is_list_view = False
+    is_team_list_view = False
 
     tab_names = {
         "screen 1": "SOLO",
@@ -449,11 +552,10 @@ class TurfPeMVP(MDApp):
         correct_text = self.tab_names.get(instance_tab_screen_name, "")
         instance_tab_label.text = correct_text
 
-    def toggle_map_list_view(self):
+        # solo tab logic
+    def toggle_map_list_view(self, btn_instance):
         map_view = self.root.ids.main_map
         list_view = self.root.ids.game_list
-        search_bar = self.root.ids.search_bar
-        toggle_btn = search_bar.ids.view_toggle_btn
 
         # switch to map logic
         if self.is_list_view:
@@ -461,7 +563,7 @@ class TurfPeMVP(MDApp):
             list_view.disabled = True
             map_view.opacity = 1
             map_view.disabled = False
-            toggle_btn.icon = "format-list-bulleted"
+            btn_instance.icon = "format-list-bulleted"
             self.is_list_view = False
         # switch to list logic
         else:
@@ -469,9 +571,31 @@ class TurfPeMVP(MDApp):
             map_view.disabled = True
             list_view.opacity = 1
             list_view.disabled = False
-            toggle_btn.icon = "map-outline"
+            btn_instance.icon = "map-outline"
             self.is_list_view = True
 
+    # team tab logic
+    def switch_team_screen(self, screen_name):
+        self.root.ids.team_screen_manager.current = screen_name
+
+    def toggle_team_view(self, btn_instance):
+        map_view = self.root.ids.team_main_map
+        list_view = self.root.ids.team_game_list
+
+        if self.is_team_list_view:
+            list_view.opacity = 0
+            list_view.disabled = True
+            map_view.opacity = 1
+            map_view.disabled = False
+            btn_instance.icon = "format-list-bulleted"
+            self.is_team_list_view = False
+        else:
+            map_view.opacity = 0
+            map_view.disabled = True
+            list_view.opacity = 1
+            list_view.disabled = False
+            btn_instance.icon = "map-outline"
+            self.is_team_list_view = True
 
 if __name__ == '__main__':
     TurfPeMVP().run()
