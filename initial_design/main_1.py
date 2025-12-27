@@ -12,9 +12,9 @@ KV = '''
 
 <TurfInfoCard>:
     orientation: "vertical"
-    size_hint: None, None
-    size: "280dp", "190dp"
-    size_hint_x: None if root.parent and root.parent.__class__.__name__ == 'MapMarkerPopup' else 1
+    size_hint_y: None
+    size_hint_x: 1
+    height: "250dp"
     md_bg_color: 0.12, 0.12, 0.12, 1 
     radius: [15] 
     padding: "12dp"
@@ -240,7 +240,7 @@ MDScreen:
 
 
                 MapView:
-                    id: main_map  # <--- THIS WAS MISSING
+                    id: main_map 
                     lat: 28.4595
                     lon: 77.0266
                     zoom: 12
@@ -253,12 +253,17 @@ MDScreen:
                         lon: 77.0901
                         TurfInfoCard: 
                             turf_name: "FaceOff 7v7"
+                            size_hint: None, None
+                            size: "250dp", "190dp"
 
                     MapMarkerPopup:
                         lat: 28.4252
                         lon: 77.0943
                         TurfInfoCard:
                             turf_name: "ClayGrounds Sec-56"
+                            size_hint: None, None
+                            size: "250dp", "190dp"
+                            
 
                 FloatingSearchBar:
                     id: search_bar
@@ -269,12 +274,104 @@ MDScreen:
             name: 'screen 2'
             text: ''
             icon: 'account-group'
+            
+            MDBoxLayout: 
+                orientation: 'vertical'
+                padding: "20dp"
+                spacing: "20dp"
+                pos_hint: {"top": 0.95} 
+                
+                MDLabel:
+                    text: "Join as a team"
+                    bold: True
+                    font_style: "H5"
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    size_hint_y: None
+                    height: "40dp"
+                    
+                BoxLayout:
+                    orientation: "horizontal"
+                    spacing: "15dp"
+                    size_hint_y: None
+                    height: "120dp"
+                    
+                    MDCard: 
+                        orientation: "vertical"
+                        md_bg_color: 0.15, 0.15, 0.15, 1
+                        radius: [15]
+                        padding: "10dp"
+                        ripple_behavior: True
+                        
+                        MDIcon:
+                            icon: "link-variant"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0.2, 0.8, 0.2, 1
+                            font_size: "35sp"
+                            pos_hint: {"center_y": 0.5, "center_x": 0.5}
+                        
+                        MDLabel:    
+                            text: "Invite via \\nLink"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0.9, 0.9, 0.9, 1
+                            font_style: "Body2"
+                    
+                    MDCard:
+                        orientation: "vertical"
+                        md_bg_color: 0.15, 0.15, 0.15, 1
+                        radius: [15]
+                        padding: "10dp"
+                        ripple_behavior: True
+                        
+                        MDIcon:
+                            icon: "qrcode-scan"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0.8, 0.8, 0.2, 1
+                            font_size: "35sp"
+                            pos_hint: {"center_y": 0.5, "center_x": 0.5}
 
-            MDLabel:
-                text: 'TEAM'
-                halign: 'center'
-                theme_text_color: "Custom"
-                text_color: "white"
+                        # FIX: I have indented this label correctly below
+                        MDLabel:
+                            text: "Show\\nQR Code"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 0.9, 0.9, 0.9, 1
+                            font_style: "Body2"
+                
+                # FIX: I moved this card OUT of the horizontal layout so it sits underneath
+                MDCard:
+                    size_hint_y: None
+                    height: "80dp"
+                    md_bg_color: 0.15, 0.15, 0.15, 1
+                    radius: [15]
+                    ripple_behavior: True
+                    padding: "20dp"
+                    spacing: "20dp"
+                    
+                    MDIcon:
+                        icon: "magnify"
+                        theme_text_color: "Custom"
+                        text_color: 0.2, 0.8, 0.2, 1
+                        font_size: "30sp"
+                        pos_hint: {"center_y": 0.5}
+                    
+                    MDLabel:
+                        text: "Find Match"
+                        theme_text_color: "Custom"
+                        text_color: "white"
+                        font_style: "H6"
+                        pos_hint: {"center_y": 0.5}
+                    
+                    MDIcon:
+                        icon: "chevron-right"
+                        theme_text_color: "Custom"
+                        text_color: "grey"
+                        pos_hint: {"center_y": 0.5}
+
+                Widget:
 
         # Tab 3: You------------------------------------
         MDBottomNavigationItem:
@@ -322,7 +419,7 @@ class TurfInfoCard(MDCard):
 
 class TurfPeMVP(MDApp):
     # Initialize the state variable
-    is_list_view = False  # <--- THIS WAS MISSING
+    is_list_view = False
 
     tab_names = {
         "screen 1": "SOLO",
